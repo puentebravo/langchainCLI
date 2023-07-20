@@ -1,5 +1,5 @@
-import Inquirer from "inquirer";
-import { OpenAI } from "langchain";
+import inquirer from "inquirer";
+import { OpenAI } from "langchain/llms/openai";
 
 require("dotenv").config();
 
@@ -10,9 +10,9 @@ const model = new OpenAI({
 });
 
 
-const promptFunction = async () => {
+const promptFunction = async (prompt: string) => {
     try {
-        const res = await model.call("How do you capitalize all characters of a string in JavaScript?")
+        const res = await model.call(prompt)
 
         console.log(res)
     }
@@ -21,4 +21,16 @@ const promptFunction = async () => {
     }
 }
 
-promptFunction()
+const init = () => {
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "prompt",
+            message: "Please input a question:"
+        }
+    ]).then( data => {
+        promptFunction(data.prompt)
+    })
+}
+
+init()
