@@ -1,5 +1,6 @@
 import inquirer from "inquirer";
 import { OpenAI } from "langchain/llms/openai";
+import { PromptTemplate } from "langchain/prompts";
 
 require("dotenv").config();
 
@@ -9,28 +10,38 @@ const model = new OpenAI({
   modelName: "gpt-3.5-turbo",
 });
 
+const promptFunction = async (input: string) => {
+  try {
 
-const promptFunction = async (prompt: string) => {
-    try {
-        const res = await model.call(prompt)
+    const prompt = new PromptTemplate({
+        template: "As a JavaScript expert, please answer the user's coding questions as thoroughly as possible. \n {question}",
+        inputVariables: ["question"]
+    })
 
-        console.log(res)
-    }
-    catch (err){
-        console.error(err)
-    }
-}
+    const promptInput = await prompt.format({
+        question: input
+    })
+
+    const res = await model.call(promptInput);
+
+    console.log(res);
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 const init = () => {
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "prompt",
-            message: "Please input a question:"
-        }
-    ]).then( data => {
-        promptFunction(data.prompt)
-    })
-}
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "prompt",
+        message: "Please input a question:",
+      },
+    ])
+    .then((data) => {
+      promptFunction(data.prompt);
+    });
+};
 
-init()
+init();
