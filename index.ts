@@ -15,7 +15,7 @@ const model = new OpenAI({
 });
 
 const parser = StructuredOutputParser.fromNamesAndDescriptions({
-  workout: "Individual exercises for the workout",
+  workout: "Comma separated list of each exercise in the workout",
   length: "the length in minutes of the workout",
   summary: "detailed directions on how to execute each exercise",
 });
